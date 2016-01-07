@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="BezierCreator" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/BezierCreator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add directory="source" />
+					<Add directory="$(#sfml2.include)" />
+					<Add directory="$(#gz.include)" />
+				</Compiler>
+				<Linker>
+					<Add library="sfml-audio-2" />
+					<Add library="sfml-graphics-2" />
+					<Add library="sfml-window-2" />
+					<Add library="sfml-system-2" />
+					<Add library="sfml-network-2" />
+					<Add library="Comdlg32" />
+					<Add directory="$(#sfml2.lib)" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/BezierCreator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add directory="source" />
+					<Add directory="$(#sfml2.include)" />
+					<Add directory="$(#gz.include)" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="sfml-audio-2" />
+					<Add library="sfml-graphics-2" />
+					<Add library="sfml-window-2" />
+					<Add library="sfml-system-2" />
+					<Add library="sfml-network-2" />
+					<Add library="Comdlg32" />
+					<Add directory="$(#sfml2.lib)" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-std=c++11" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Linker>
+			<Add library="Comdlg32" />
+		</Linker>
+		<Unit filename="main.cpp" />
+		<Unit filename="source/App.cpp" />
+		<Unit filename="source/App.h" />
+		<Unit filename="source/Bezier/BezierPath.cpp" />
+		<Unit filename="source/Bezier/BezierPath.h" />
+		<Unit filename="source/GUI/Button.cpp" />
+		<Unit filename="source/GUI/Button.h" />
+		<Unit filename="source/GUI/ExportWindow.cpp" />
+		<Unit filename="source/GUI/ExportWindow.h" />
+		<Unit filename="source/GUI/SettingsWindow.cpp" />
+		<Unit filename="source/GUI/SettingsWindow.h" />
+		<Unit filename="source/GUI/Textbox.cpp" />
+		<Unit filename="source/GUI/Textbox.h" />
+		<Unit filename="source/GUI/Toolbar.cpp" />
+		<Unit filename="source/GUI/Toolbar.h" />
+		<Unit filename="source/Global/Global.cpp" />
+		<Unit filename="source/Global/Global.h" />
+		<Unit filename="source/TinyXML2/tinyxml2.cpp" />
+		<Unit filename="source/TinyXML2/tinyxml2.h" />
+		<Unit filename="source/Utils/Utils.cpp" />
+		<Unit filename="source/Utils/Utils.h" />
+		<Unit filename="source/Utils/Vector2.cpp" />
+		<Unit filename="source/Utils/Vector2.h" />
+		<Unit filename="source/Utils/gzClock.cpp" />
+		<Unit filename="source/Utils/gzClock.h" />
+		<Unit filename="source/consts.h" />
+		<Unit filename="source/enums.h" />
+		<Unit filename="source/general.h" />
+		<Unit filename="source/structs.h" />
+		<Unit filename="source/tinyfiledialogs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="source/tinyfiledialogs.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

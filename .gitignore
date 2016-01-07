@@ -1,3 +1,12 @@
+#################
+## Game-Files
+#################
+## Folders
+#################
+/bin/
+/obj/
+
+
 # Compiled Object files
 *.slo
 *.lo
