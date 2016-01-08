@@ -74,10 +74,10 @@ struct KeyboardKey
    bool        isKeyReleased = false;
 
    bool keyRepeat = false;
-   double repeatTime = 0.1;
-   double elapsedTime = 0;
+   float repeatTime = 0.1;
+   float elapsedTime = 0;
 
-   void updateKey(bool isDown, double timeDelta)
+   void updateKey(bool isDown, float timeDelta)
    {
        isKeyPressed     = (!isKeyDown && isDown);
        isKeyReleased    = (isKeyDown && !isDown);
@@ -110,15 +110,15 @@ struct KeyboardKey
 
 struct Camera{
 
-    double x;
-    double y;
+    float x;
+    float y;
     int w;
     int h;
 
     Camera() : x(0), y(0), w(0), h(0) {}
-    Camera(double xpos, double ypos, int width, int height) : x(xpos), y(ypos), w(width), h(height){}
+    Camera(float xpos, float ypos, int width, int height) : x(xpos), y(ypos), w(width), h(height){}
 
-    void setPosition(double xpos, double ypos)
+    void setPosition(float xpos, float ypos)
     {
         x = xpos;
         y = ypos;

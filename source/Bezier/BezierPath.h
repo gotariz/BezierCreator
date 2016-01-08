@@ -63,14 +63,14 @@ class BezierPath
         vector<BPoint> points;
 
         int getCurveCount();
-        Vector2 getPoint(double t, int n);
-        Vector2 getPoint(double t);
+        Vector2 getPoint(float t, int n);
+        Vector2 getPoint(float t);
 
-        Vector2 findPoint(Vector2 pos, double distance);
-        Vector2 findPoint(double x, double y, double distance);
+        Vector2 findPoint(Vector2 pos, float distance);
+        Vector2 findPoint(float x, float y, float distance);
 
     private:
-        double normalise(double number); // truncate the number to be between 0 and 1 inclusive
+        float normalise(float number); // truncate the number to be between 0 and 1 inclusive
 };
 
 #endif // BEZIERPATH_H

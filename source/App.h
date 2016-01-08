@@ -31,17 +31,17 @@ class App
 
         BezierPath bezier;
 
-        double vx = 0;
-        double vy = 0;
+        float vx = 0;
+        float vy = 0;
 
         sf::Texture indTexture;
         sf::Sprite  indImg;
 
         sf::CircleShape ball;
-        double time = 0;
+        float time = 0;
 
         int increasing = 1;
-        double dtime = 0;
+        float dtime = 0;
 
 
         // selected buttons

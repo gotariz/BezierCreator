@@ -11,10 +11,10 @@ class gzClock
 		gzClock();
 		virtual ~gzClock(){}
 
-		double		getCurrentTimeSeconds();
+		float		getCurrentTimeSeconds();
 		unsigned	getCurrentTimeMilliseconds();
 
-		double		getDeltaSeconds();
+		float		getDeltaSeconds();
 		long long	getDeltaMilliseconds();
 		long long	getDeltaMicroseconds();
 		long long	getDeltaNanoseconds();

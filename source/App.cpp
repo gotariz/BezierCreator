@@ -56,8 +56,8 @@ void App::handleEvents()
                 global.zoom *= 1.0 - (event.mouseWheelScroll.delta / 10.f);
                 recalibrateView();
             } else {
-                double zoomPercentage = (1.f / global.zoom) + (0.1 * event.mouseWheelScroll.delta); // current zoom +- 10%
-                zoomPercentage = max(zoomPercentage,0.1); // prevent zooming in to negative values
+                float zoomPercentage = (1.f / global.zoom) + (0.1 * event.mouseWheelScroll.delta); // current zoom +- 10%
+                zoomPercentage = max(zoomPercentage,0.1f); // prevent zooming in to negative values
                 global.zoom = 1.f / zoomPercentage;
                 recalibrateView();
             }
@@ -239,7 +239,7 @@ void App::renderBezier()
         Vector2 q2;
         for (int i=1;i<=global.segmentsPerCurve;++i)
         {
-            q2 = bezier.getPoint((double)i / global.segmentsPerCurve,n);
+            q2 = bezier.getPoint((float)i / global.segmentsPerCurve,n);
             global.drawLine(q1,q2,sf::Color::Black);
             q1 = q2;
         }

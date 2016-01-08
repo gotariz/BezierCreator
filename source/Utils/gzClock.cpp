@@ -5,21 +5,21 @@ gzClock::gzClock()
 	//old_time = high_resolution_clock::now();
 }
 
-double gzClock::getCurrentTimeSeconds()
+float gzClock::getCurrentTimeSeconds()
 {
 	std::chrono::high_resolution_clock::now();
-	return static_cast<double>(clock()) / static_cast<double>(CLOCKS_PER_SEC);
+	return static_cast<float>(clock()) / static_cast<float>(CLOCKS_PER_SEC);
 }
 
 unsigned gzClock::getCurrentTimeMilliseconds()
 {
-	return (static_cast<double>(clock()) / static_cast<double>(CLOCKS_PER_SEC)) * 1000.f;
+	return (static_cast<float>(clock()) / static_cast<float>(CLOCKS_PER_SEC)) * 1000.f;
 }
 
-double gzClock::getDeltaSeconds()
+float gzClock::getDeltaSeconds()
 {
 	high_resolution_clock::time_point current_time = high_resolution_clock::now();
-	duration<double> time_span = duration_cast<duration<double>>(current_time - old_time);
+	duration<float> time_span = duration_cast<duration<float>>(current_time - old_time);
 	old_time = current_time;
 	return time_span.count();
 }

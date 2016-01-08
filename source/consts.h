@@ -7,12 +7,12 @@
 
 using namespace std;
 
-static const double         PI       = 3.141592653589793;
+static const float         PI       = 3.141592653589793;
 
-static const double         DEGTORAD = PI / 180.0;
-static const double         RADTODEG = 180.0 / PI;
-static const double         HANDLE_RADIUS = 5.5;
-static const double         PAN_SPEED = 500.0; // pixels per second
+static const float         DEGTORAD = PI / 180.0;
+static const float         RADTODEG = 180.0 / PI;
+static const float         HANDLE_RADIUS = 5.5;
+static const float         PAN_SPEED = 500.0; // pixels per second
 
 // colors
 static const sf::Color CBLUE(10,170,235);

@@ -167,7 +167,7 @@ void Global::drawLine(Vector2 p1, Vector2 p2, sf::Color c)
     window->draw(line, 2, sf::Lines);
 }
 
-Vector2 lerp(Vector2 p1, Vector2 p2, double t)
+Vector2 lerp(Vector2 p1, Vector2 p2, float t)
 {
     return p1 + ((p2 - p1) * t);
 }
@@ -194,7 +194,7 @@ bool Global::isTouching(Vector2 point, int x, int y, int w, int h)
     return true;
 }
 
-double Global::getHandleRadiusSize()
+float Global::getHandleRadiusSize()
 {
     return HANDLE_RADIUS * zoom;
 }

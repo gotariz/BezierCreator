@@ -225,8 +225,8 @@ namespace gz
     ////////////////////////////////////////////////////////////
     inline std::string& toUpperCase( std::string& str )
     {
-        transform( str.begin(), str.end(), str.begin(), toupper );
-        // passing the address of the C toupper() function to transform()
+        for ( std::string::iterator iter = str.begin(); iter != str.end(); ++iter )
+            *iter = toupper( *iter );
         return str;
     }
 

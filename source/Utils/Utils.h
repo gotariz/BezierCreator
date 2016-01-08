@@ -16,8 +16,8 @@ class Utils
 
         static int      roundUp(int numToRound, int multiple);
         static int      roundNearest(int numToRound, int multiple);
-        static int      roundNearestf(double numToRound, int multiple);
-        static double   roundNearestDecimal(double numToRound, int multiple);
+        static int      roundNearestf(float numToRound, int multiple);
+        static float   roundNearestDecimal(float numToRound, int multiple);
 
 };
 

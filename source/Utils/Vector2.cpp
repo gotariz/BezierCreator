@@ -1,34 +1,34 @@
 #include "Vector2.h"
 
-Vector2::Vector2(const char* vectorString)
-{
-    if (vectorString == NULL)
-    {
-        x = 0;
-        y = 0;
-    }
-    else
-    {
-        std::string value = "";
-        std::string vstring = vectorString;
-        for (char c: vstring)
-        {
-            if (c == ',')
-            {
-                x = atof(value.c_str());
-                value = "";
-            }
-            else
-            {
-                value += gz::toString(c);
-            }
-        }
+//Vector2::Vector2(const char* vectorString)
+//{
+//    if (vectorString == NULL)
+//    {
+//        x = 0;
+//        y = 0;
+//    }
+//    else
+//    {
+//        std::string value = "";
+//        std::string vstring = vectorString;
+//        for (char c: vstring)
+//        {
+//            if (c == ',')
+//            {
+//                x = atof(value.c_str());
+//                value = "";
+//            }
+//            else
+//            {
+//                value += gz::toString(c);
+//            }
+//        }
+//
+//        y = atof(value.c_str());
+//    }
+//}
 
-        y = atof(value.c_str());
-    }
-}
-
-Vector2::Vector2(double xval, double yval) : x(xval), y(yval)
+Vector2::Vector2(float xval, float yval) : x(xval), y(yval)
 {
 
 }
@@ -42,14 +42,14 @@ Vector2::~Vector2()
 // getters
 ///////////////////////////////////////////////////////////////////////////
 
-double Vector2::getAngle()
+float Vector2::getAngle()
 {
-    double a = atan2(y,x) * RADTODEG;
+    float a = atan2(y,x) * RADTODEG;
     if (a < 0) a += 360;
     return a;
 }
 
-double Vector2::getMagnitude()
+float Vector2::getMagnitude()
 {
     return sqrt( (x * x) + (y * y) );
 }
@@ -62,27 +62,16 @@ Vector2 Vector2::getNormalised()
     return normalisedVector;
 }
 
-sf::Vector2f Vector2::toSfmlVector()
-{
-    return sf::Vector2f(x,y);
-}
-
 ///////////////////////////////////////////////////////////////////////////
 // setters =SUM( B5 * =SIN(RADIANS(36)) - B6 * = SIN(RADIANS(36))      )
 ///////////////////////////////////////////////////////////////////////////
-
-void Vector2::print(std::string name)
-{
-    gz::print_d(name+  ": {x=" + gz::toString(x) + ",y=" + gz::toString(y) + "}");
-}
-
 string Vector2::toString()
 {
     return gz::toString(x) + "," + gz::toString(y);
 }
 
 
-double Vector2::dot(Vector2 v2)
+float Vector2::dot(Vector2 v2)
 {
     Vector2 v1(x,y);
 
@@ -92,39 +81,39 @@ double Vector2::dot(Vector2 v2)
     return acos((v1.x * v2.x) + (v1.y * v2.y)) * RADTODEG;
 }
 
-void Vector2::rotate(double angle)
+void Vector2::rotate(float angle)
 {
-    double theta = (angle * DEGTORAD);
-    double cs = cos(theta);
-    double sn = sin(theta);
+    float theta = (angle * DEGTORAD);
+    float cs = cos(theta);
+    float sn = sin(theta);
 
-    double newx = x * cs - y * sn;
-    double newy = x * sn + y * cs;
+    float newx = x * cs - y * sn;
+    float newy = x * sn + y * cs;
 
     set(newx,newy);
 }
 
-void Vector2::rotateAround(double angle, Vector2 vec)
+void Vector2::rotateAround(float angle, Vector2 vec)
 {
     rotateAround(angle, vec.x, vec.y);
 }
 
-void Vector2::rotateAround(double angle, double origin_x, double origin_y)
+void Vector2::rotateAround(float angle, float origin_x, float origin_y)
 {
-    double px = x - origin_x;
-    double py = y - origin_y;
+    float px = x - origin_x;
+    float py = y - origin_y;
 
-    double theta = (angle * DEGTORAD);
-    double cs = cos(theta);
-    double sn = sin(theta);
+    float theta = (angle * DEGTORAD);
+    float cs = cos(theta);
+    float sn = sin(theta);
 
-    double newx = (px * cs - py * sn) + origin_x;
-    double newy = (px * sn + py * cs) + origin_y;
+    float newx = (px * cs - py * sn) + origin_x;
+    float newy = (px * sn + py * cs) + origin_y;
 
     set(newx,newy);
 }
 
-void Vector2::setMagnitude(double magnitude)
+void Vector2::setMagnitude(float magnitude)
 {
     normalise();
     x *= magnitude;
@@ -133,7 +122,7 @@ void Vector2::setMagnitude(double magnitude)
 
 void Vector2::normalise()
 {
-    double magnitude = getMagnitude();
+    float magnitude = getMagnitude();
     if (magnitude > 0)
     {
         x /= magnitude;
@@ -141,7 +130,7 @@ void Vector2::normalise()
     }
 }
 
-void Vector2::set(double xval, double yval)
+void Vector2::set(float xval, float yval)
 {
     x = xval;
     y = yval;
@@ -219,45 +208,45 @@ void Vector2::operator/=(Vector2 vec)
 }
 
 
-Vector2 Vector2::operator+(double scalar)
+Vector2 Vector2::operator+(float scalar)
 {
     return Vector2(x + scalar, y + scalar);
 }
 
-Vector2 Vector2::operator-(double scalar)
+Vector2 Vector2::operator-(float scalar)
 {
     return Vector2(x - scalar, y - scalar);
 }
 
-Vector2 Vector2::operator*(double scalar)
+Vector2 Vector2::operator*(float scalar)
 {
     return Vector2(x * scalar, y * scalar);
 }
 
-Vector2 Vector2::operator/(double scalar)
+Vector2 Vector2::operator/(float scalar)
 {
     return Vector2(x / scalar, y / scalar);
 }
 
-void Vector2::operator+=(double scalar)
+void Vector2::operator+=(float scalar)
 {
     x += scalar;
     y += scalar;
 }
 
-void Vector2::operator-=(double scalar)
+void Vector2::operator-=(float scalar)
 {
     x -= scalar;
     y -= scalar;
 }
 
-void Vector2::operator*=(double scalar)
+void Vector2::operator*=(float scalar)
 {
     x *= scalar;
     y *= scalar;
 }
 
-void Vector2::operator/=(double scalar)
+void Vector2::operator/=(float scalar)
 {
     x /= scalar;
     y /= scalar;

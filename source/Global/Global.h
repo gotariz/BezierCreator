@@ -27,11 +27,11 @@ class Global
 
         int mx = 0;
         int my = 0;
-        double wx = 0;
-        double wy = 0;
+        float wx = 0;
+        float wy = 0;
 
-        double zoom = 1.f;
-        double timeDelta = 0;
+        float zoom = 1.f;
+        float timeDelta = 0;
 
         int fpsLimit = 60;
 
@@ -46,7 +46,7 @@ class Global
         bool isTouching(Vector2 point, sf::RectangleShape box);
         bool isTouching(Vector2 point, int x, int y, int w, int h);
 
-        double getHandleRadiusSize();
+        float getHandleRadiusSize();
 
         // settings variables
         int     gridSize = 50;

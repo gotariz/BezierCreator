@@ -21,10 +21,10 @@ int Utils::roundNearest(int numToRound, int multiple) {
     }
 }
 
-int Utils::roundNearestf(double numToRound, int multiple) {
+int Utils::roundNearestf(float numToRound, int multiple) {
 
-    double remainder = fmod(numToRound,multiple);
-    double half = static_cast<double>(multiple)/2.0;
+    float remainder = fmod(numToRound,multiple);
+    float half = static_cast<float>(multiple)/2.0;
     int value = static_cast<int>(numToRound);
 
     if (remainder >= 0 && remainder >= half)        return value + multiple;
@@ -47,9 +47,9 @@ int Utils::roundUp(int numToRound, int multiple)
     return numToRound + multiple - remainder;
 }
 
-double Utils::roundNearestDecimal(double numToRound, int decimals)
+float Utils::roundNearestDecimal(float numToRound, int decimals)
 {
-    double multiplier = pow(10,decimals);
+    float multiplier = pow(10,decimals);
 
     //roundf(val * 100) / 100;
 

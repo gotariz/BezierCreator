@@ -10,7 +10,7 @@ BezierPath::~BezierPath()
     //dtor
 }
 
-double BezierPath::normalise(double number)
+float BezierPath::normalise(float number)
 {
     if (number >= 2) number -= static_cast<int>(number) - 1;
     if (number > 1)  --number;
@@ -18,23 +18,23 @@ double BezierPath::normalise(double number)
     return number;
 }
 
-Vector2 BezierPath::getPoint(double t)
+Vector2 BezierPath::getPoint(float t)
 {
-    double  t_range = 1.0 / getCurveCount();
+    float  t_range = 1.0 / getCurveCount();
     int     curve_index = static_cast<int>(t / t_range);
     curve_index = min(curve_index,getCurveCount()-1);
-    double new_t = (t * getCurveCount()) - curve_index;
+    float new_t = (t * getCurveCount()) - curve_index;
 
     return getPoint(new_t,curve_index);
 }
 
-Vector2 BezierPath::getPoint(double t, int n)
+Vector2 BezierPath::getPoint(float t, int n)
 {
-    double u = 1.f-t;
-    double tt = t*t;
-    double uu = u*u;
-    double ttt = tt*t;
-    double uuu = uu*u;
+    float u = 1.f-t;
+    float tt = t*t;
+    float uu = u*u;
+    float ttt = tt*t;
+    float uuu = uu*u;
 
     Vector2 p1 = points.at(n).p;
     Vector2 p2 = points.at(n).h2;
@@ -54,7 +54,7 @@ int BezierPath::getCurveCount()
     return points.size()-1;
 }
 
-Vector2 BezierPath::findPoint(Vector2 pos, double distance)
+Vector2 BezierPath::findPoint(Vector2 pos, float distance)
 {
     for (int i = points.size() -1; i >= 0; --i)
     {
@@ -70,7 +70,7 @@ Vector2 BezierPath::findPoint(Vector2 pos, double distance)
     return Vector2(-1,0);
 }
 
-Vector2 BezierPath::findPoint(double x, double y, double distance)
+Vector2 BezierPath::findPoint(float x, float y, float distance)
 {
    return findPoint(Vector2(x,y),distance);
 }
