@@ -150,12 +150,12 @@ void ExportWindow::render()
 
     window.draw(rec);
 
-    btnNO.draw();
-    btnNX.draw();
-    btnNY.draw();
+    btnNO.render();
+    btnNX.render();
+    btnNY.render();
 
-    btnExport.draw();
-    btnCancel.draw();
+    btnExport.render();
+    btnCancel.render();
     window.display();
 }
 

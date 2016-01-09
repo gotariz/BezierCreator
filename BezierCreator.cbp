@@ -73,8 +73,6 @@
 		<Unit filename="source/GUI/SettingsWindow.h" />
 		<Unit filename="source/GUI/Textbox.cpp" />
 		<Unit filename="source/GUI/Textbox.h" />
-		<Unit filename="source/GUI/Toolbar.cpp" />
-		<Unit filename="source/GUI/Toolbar.h" />
 		<Unit filename="source/Global/Global.cpp" />
 		<Unit filename="source/Global/Global.h" />
 		<Unit filename="source/TinyXML2/tinyxml2.cpp" />

@@ -56,7 +56,7 @@ void Textbox::handleEvents()
 {
     if (global.keys[KEY_MOUSE_LEFT].isKeyPressed)
     {
-        gz::Point<int> mousePos = gz::Point<int>(global.mx,global.my);
+        gz::Point<int> mousePos = gz::Point<int>(global.mouse.x,global.mouse.y);
         gz::Rect<int>  button = gz::Rect<int>(
                                          rec.getPosition().x,
                                          rec.getPosition().y,

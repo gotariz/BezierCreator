@@ -35,7 +35,7 @@ void Button::handleEvents(Vector2 mouse)
     }
 }
 
-void Button::draw()
+void Button::render()
 {
     sf::RenderWindow* w = (!window ? global.window : window);
 

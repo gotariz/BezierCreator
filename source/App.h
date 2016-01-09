@@ -18,8 +18,9 @@ class App
 
         sf::RenderWindow& window;
 
+        BezierPath bezier;
+
         gzClock clock;
-        Toolbar         toolbar;
 
         // points currently being used
         int         point = -1;
@@ -28,11 +29,10 @@ class App
         // mouse positions when panning
         Vector2 cameraClick;
         Vector2 primalView;
+        Vector2 v;
 
-        BezierPath bezier;
-
-        float vx = 0;
-        float vy = 0;
+        bool isEditing = false;
+        bool isPanning = false;
 
         sf::Texture indTexture;
         sf::Sprite  indImg;
@@ -43,37 +43,34 @@ class App
         int increasing = 1;
         float dtime = 0;
 
+        sf::Text    labelZoom;
+        Button      btnSettings;
+
 
         // selected buttons
-        int activeTool = BTN_ADD;
         ExportWindow    ewindow;
         SettingsWindow  swindow;
 
         // FUNCTIONS
         void init();
-
-        void handleEvents();
-        void handleCameraEvents();
-        void handleGUIEvents();
-
+        void events();
         void update();
-
         void render();
+
+        void handleBezier();
+        void handleCamera();
+        bool handleGui();
+
         void renderGrid();
         void renderGUI();
-        void renderBezier();
+        void renderBezierCurve();
         void renderBezierControls();
-        void renderDebugBezierControls();
-
-        void recalibrateView();
+        void renderBezierDebug();
 
     private:
-
-        void renderCursorPosition();
-
-        void addPoint();
-        void deletePoint();
-        void movePoint();
+        void recalibrateView();
+        void renderCursorIndicator();
+        void renderZoomIndicator();
 };
 
 #endif // APP_H

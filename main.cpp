@@ -28,7 +28,7 @@ int main()
     {
         global.timeDelta = app.clock.getDeltaSeconds();
         // check all the window's events that were triggered since the last iteration of the loop
-        app.handleEvents();
+        app.events();
         app.update();
         app.render();
     }

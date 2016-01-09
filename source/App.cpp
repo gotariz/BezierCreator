@@ -14,29 +14,32 @@ void App::init()
 {
     swindow.readSettings();
 
+    global.bezier = &bezier;
     global.fntRoboto.loadFromFile("media/fonts/Roboto-Light.ttf");
     global.fntCourier.loadFromFile("media/fonts/OpenSans-Light.ttf");
-    // change the camera's x and y position so the world origin is in the bottom left
-    vx = -100;
-    vy = -global.h + 100;
-    recalibrateView();
 
-    toolbar.init();
     ewindow.init();
     swindow.init();
 
-    global.bezier = &bezier;
+    v.set(-100,-global.h+100);
+    recalibrateView();
 
-    // indicator for mouse position
     indTexture.loadFromFile("media/images/indicator.png");
     indImg.setTexture(indTexture);
 
-    ball.setRadius(10.f);
+    ball.setRadius(10);
     ball.setOrigin(10,10);
     ball.setFillColor(sf::Color::Red);
-}
 
-void App::handleEvents()
+    btnSettings.id = BTN_SETTINGS;
+    btnSettings.setSize(45,45);
+    btnSettings.loadImage("media/images/options.png");
+    btnSettings.setBackgroundColors(CBLUE,GRAY192,BLUEGRAY);
+    btnSettings.ci_active = sf::Color::Black;
+    btnSettings.rec.setOutlineThickness(0);
+}
+/////////////////////////////////////////////////////////////////////////////
+void App::events()
 {
     global.isTextEntered = false;
     sf::Event event;
@@ -69,101 +72,29 @@ void App::handleEvents()
         }
     }
 
-    // set global variables for mouse positions
-    global.mx = sf::Mouse::getPosition(window).x;
-    global.my = sf::Mouse::getPosition(window).y;
-    sf::Vector2f worldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-    global.wx = worldPos.x;
-    global.wy = worldPos.y;
-    if (global.zoom == 1) { // when at 100% zoom ignore decimals due to rounding errors
-        global.wx = Utils::roundNearestf(worldPos.x,1);
-        global.wy = Utils::roundNearestf(worldPos.y,1);
-    }
-
-    global.updateKeys();
-    handleCameraEvents();
-    handleGUIEvents();
-}
-
-void App::handleCameraEvents()
-{
-    // moving the camera with the mouse while holding down space
-    if (global.keys.at(KEY_MOUSE_LEFT).isKeyPressed && global.keys.at(sf::Keyboard::Space).isKeyDown)
-    {
-        cameraClick = Vector2(global.mx,global.my);
-        primalView.set(vx,vy);
-    } else if (global.keys.at(KEY_MOUSE_LEFT).isKeyDown && global.keys.at(sf::Keyboard::Space).isKeyDown){
-        Vector2 delta = cameraClick - Vector2(global.mx,global.my);
-        vx = primalView.x + (delta.x * global.zoom);
-        vy = primalView.y + (delta.y* global.zoom);
-        recalibrateView();
-    }
-
-
-    // pan the camera left, right, up and down
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        vx -= (PAN_SPEED * global.timeDelta);
-        recalibrateView();
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        vx += (PAN_SPEED * global.timeDelta);
-        recalibrateView();
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-        vy += (PAN_SPEED * global.timeDelta);
-        recalibrateView();
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-        vy -= (PAN_SPEED * global.timeDelta);
-        recalibrateView();
-    }
-}
-
-void App::recalibrateView()
-{
-    // apply changes to the camera
-    sf::View view(sf::FloatRect(0,0,global.w,global.h));
-    view.move( sf::Vector2f(static_cast<int>(vx),static_cast<int>(vy)) );
-    view.zoom(global.zoom);
-    window.setView(view);
-}
-
-
-void App::handleGUIEvents()
-{
-    toolbar.handleEvents();
-
-    GUIEvent e;
-    while (toolbar.poll(e))
-    {
-        if (e.group == TOOLS) {
-            activeTool = e.id;
-        } else {
-            if (e.id == BTN_EXPORT) {
-                ewindow.openWindow();
-                ewindow.run();
-            } else if (e.id == BTN_OPTIONS) {
-                swindow.openWindow();
-                swindow.run();
-            }
+    if (global.keys[sf::Keyboard::S].isKeyPressed) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) ) {
+            ewindow.openWindow();
+            ewindow.run();
         }
     }
 
-    // ignore GUI events while space is held down
-    if (global.my < 45 || global.keys[sf::Keyboard::Space].isKeyDown) return;
+    // set global variables for mouse positions
+    global.mouse.x = sf::Mouse::getPosition(window).x;
+    global.mouse.y = sf::Mouse::getPosition(window).y;
+    sf::Vector2f worldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+    global.mouseWorld.x = worldPos.x;
+    global.mouseWorld.y = worldPos.y;
 
-    if (activeTool == BTN_ADD) {
-        addPoint();
-    } else if (activeTool == BTN_DELETE) {
-        deletePoint();
-    } else if (activeTool == BTN_MOVE) {
-        movePoint();
+    global.updateKeys();
+    handleCamera();
+    if (!handleGui()) {
+        handleBezier();
     }
 }
-
+/////////////////////////////////////////////////////////////////////////////
 void App::update()
 {
-    toolbar.update();
-
     // update the preview ball animation
     if (bezier.points.size() > 1) {
         time += global.timeDelta;
@@ -179,7 +110,7 @@ void App::update()
         }
     }
 
-
+    // find selected point
     dtime += global.timeDelta * increasing;
     if (dtime >= global.debugAnimationDuration) {
         increasing = -1;
@@ -189,19 +120,133 @@ void App::update()
         dtime = 0;
     }
 }
-
+/////////////////////////////////////////////////////////////////////////////
 void App::render()
 {
     window.clear(GRAY246);
     renderGrid();
-    renderBezier();
+    renderBezierCurve();
     renderGUI();
     if (global.showBall) {
             window.draw(ball);
     }
     window.display();
 }
+/////////////////////////////////////////////////////////////////////////////
 
+
+
+/////////////////////////////////////////////////////////////////////////////
+// EVENT HANDLING FUNCTIONS
+/////////////////////////////////////////////////////////////////////////////
+void App::handleCamera()
+{
+    if (isEditing) return;
+
+    KeyboardKey mouseLeft = global.keys.at(KEY_MOUSE_LEFT);
+    KeyboardKey space = global.keys.at(sf::Keyboard::Space);
+
+    if (space.isKeyPressed) {
+        isPanning = true;
+    } else if (space.isKeyReleased) {
+        isPanning = false;
+    }
+
+    if (mouseLeft.isKeyPressed && isPanning) {
+        cameraClick = global.mouse;
+        primalView = v;
+    } else if (mouseLeft.isKeyDown && space.isKeyDown){
+        Vector2 delta = cameraClick - global.mouse;
+        v.x = primalView.x + (delta.x * global.zoom);
+        v.y = primalView.y + (delta.y* global.zoom);
+        recalibrateView();
+    }
+}
+/////////////////////////////////////////////////////////////////////////////
+bool App::handleGui()
+{
+    btnSettings.handleEvents(global.mouse);
+    if (btnSettings.isClicked) {
+        btnSettings.isClicked = false;
+        swindow.openWindow();
+        swindow.run();
+    }
+
+    return btnSettings.isPressed;
+}
+/////////////////////////////////////////////////////////////////////////////
+void App::handleBezier()
+{
+    if (isPanning) return;
+
+    KeyboardKey mouseLeft = global.keys[KEY_MOUSE_LEFT];
+    KeyboardKey mouseRight = global.keys[KEY_MOUSE_RIGHT];
+    bool altDown = global.keys[sf::Keyboard::LAlt].isKeyDown || global.keys[sf::Keyboard::RAlt].isKeyDown;
+
+    int hoverpoint = -1;
+    int hovertype = -1;
+    if (point == -1) {
+        Vector2 result = bezier.findPoint(global.mouseWorld,global.getHandleRadiusSize());
+        hoverpoint = result.x;
+        hovertype = result.y;
+    }
+
+    if (mouseLeft.isKeyPressed) {// left click
+        if (hoverpoint != -1) {
+            point = hoverpoint;
+            pointtype = hovertype;
+        } else { // add new point
+            BPoint newPoint = BPoint(global.mouseWorld);
+            bezier.points.push_back(newPoint);
+            point = bezier.points.size() - 1;
+            pointtype = (bezier.points.size() == 1 ? 1 : 2);
+        }
+        isEditing = true;
+
+    } else if (!mouseLeft.isKeyDown && mouseRight.isKeyPressed)  {// right click
+        if (hoverpoint != -1) { // delete selected point
+            if (hovertype == 0) {
+                bezier.points.erase(bezier.points.begin()+hoverpoint);
+            } else if (hovertype == 1) {
+                bezier.points.at(hoverpoint).h1.set(bezier.points.at(hoverpoint).p);
+            } else if (hovertype == 2) {
+                bezier.points.at(hoverpoint).h2.set(bezier.points.at(hoverpoint).p);
+            }
+        }
+    }
+
+    if (mouseLeft.isKeyDown && point != -1) {
+
+        if (pointtype == 0) {
+            bezier.points.at(point).setPosition(global.mouseWorld);
+        } else if (pointtype == 1) {
+            if (altDown) {
+                bezier.points.at(point).h1.set(global.mouseWorld);
+            } else {
+                bezier.points.at(point).setH1Linked(global.mouseWorld);
+            }
+        } else if (pointtype == 2) {
+            if (altDown) {
+                bezier.points.at(point).h2.set(global.mouseWorld);
+            } else {
+                bezier.points.at(point).setH2Linked(global.mouseWorld);
+            }
+        }
+    }
+
+    if (mouseLeft.isKeyReleased) {
+        point = -1;
+        pointtype = -1;
+        isEditing = false;
+    }
+}
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// RENDERING FUNCTIONS
+/////////////////////////////////////////////////////////////////////////////
 void App::renderGUI()
 {
     // render GUI to its own view
@@ -209,29 +254,44 @@ void App::renderGUI()
     sf::FloatRect visibleArea(0, 0, global.w, global.h);
     window.setView(sf::View(visibleArea));
 
-    toolbar.render();
-    renderCursorPosition();
+    btnSettings.render();
+    renderZoomIndicator();
+    renderCursorIndicator();
 
     window.setView(view);
 }
-
+/////////////////////////////////////////////////////////////////////////////
 void App::renderGrid()
 {
-    // draws the grid lines
-    for (int x = -10000; x < 10000; x+=global.gridSize){ // vertical lines
-        global.drawLine(Vector2(x,-10000),Vector2(x,10000),CBLUET);
+    sf::View v = window.getView();
+    sf::Vector2f c = v.getCenter();
+    float view_w = global.w * global.zoom;
+    float view_h = global.h * global.zoom;
+    float view_x = c.x - (view_w / 2);
+    float view_y = c.y - (view_h / 2);
+    float view_x2 = view_x + view_w;
+    float view_y2 = view_y + view_h;
+
+    float xpos = Utils::roundUp(view_x,global.gridSize);
+    float ypos = Utils::roundUp(view_y,global.gridSize);
+
+    sf::Color colour = CBLUET;
+    while (xpos <= view_x2)
+    {
+        colour = xpos == 0 ? sf::Color::Red : CBLUET;
+        global.drawLine(Vector2(xpos,view_y),Vector2(xpos,view_y2),colour);
+        xpos+=global.gridSize;
     }
 
-    for (int y = -10000; y < 10000; y+=global.gridSize){ // horizontal lines
-        global.drawLine(Vector2(-10000,y),Vector2(10000,y),CBLUET);
+    while (ypos <= view_y2)
+    {
+        colour = ypos == 0 ? sf::Color::Green : CBLUET;
+        global.drawLine(Vector2(view_x,ypos),Vector2(view_x2,ypos),colour);
+        ypos+=global.gridSize;
     }
-
-    // draw the center lines
-    global.drawLine(Vector2(-10000,0),Vector2(10000,0),CBLUE);
-    global.drawLine(Vector2(0,-10000),Vector2(0,10000),CBLUE);
 }
-
-void App::renderBezier()
+/////////////////////////////////////////////////////////////////////////////
+void App::renderBezierCurve()
 {
     for (int n=0;n<bezier.getCurveCount();++n)
     {
@@ -246,9 +306,9 @@ void App::renderBezier()
     }
 
     renderBezierControls();
-    renderDebugBezierControls();
+    renderBezierDebug();
 }
-
+/////////////////////////////////////////////////////////////////////////////
 void App::renderBezierControls()
 {
     if (!global.showControlPoints) return;
@@ -277,8 +337,8 @@ void App::renderBezierControls()
         global.window->draw(c);
     }
 }
-
-void App::renderDebugBezierControls()
+/////////////////////////////////////////////////////////////////////////////
+void App::renderBezierDebug()
 {
     if (!global.drawDebug) return;
 
@@ -322,25 +382,36 @@ void App::renderDebugBezierControls()
         c.setPosition(p8.x,p8.y);window.draw(c);
     }
 }
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS
 /////////////////////////////////////////////////////////////////////////////
+void App::recalibrateView()
+{
+    // apply changes to the camera
+    sf::View view(sf::FloatRect(0,0,global.w,global.h));
+    view.move( sf::Vector2f(static_cast<int>(v.x),static_cast<int>(v.y)) );
+    view.zoom(global.zoom);
+    window.setView(view);
+}
 
-void App::renderCursorPosition()
+void App::renderCursorIndicator()
 {
     if (!global.showCursorPosition) return;
-    if (global.my < 45) return;
+    if (global.mouse.y < 45) return;
 
     sf::Text text;
     text.setFont(global.fntRoboto);
     text.setColor(sf::Color::White);
     text.setCharacterSize(13);
-    text.setString("x:" + gz::toString(global.wx) + " y:" + gz::toString(global.wy));
+    text.setString("x:" + gz::toString(global.mouseWorld.x) + " y:" + gz::toString(global.mouseWorld.y));
 
     int tw = text.getLocalBounds().width;
-    int x = global.mx+1;
-    int y = global.my-40;
+    int x = global.mouse.x+1;
+    int y = global.mouse.y-40;
     int w = tw+10;
     int h = 19;
     int i = 5;  // indent
@@ -357,87 +428,31 @@ void App::renderCursorPosition()
 
     window.draw(rec);
 
-    indImg.setPosition(global.mx,y+h);
+    indImg.setPosition(global.mouse.x,y+h);
     window.draw(indImg);
     text.setPosition(x+i,y);
     window.draw(text);
 }
 
-void App::addPoint()
+void App::renderZoomIndicator()
 {
-    if (global.keys[KEY_MOUSE_LEFT].isKeyPressed)
-    {
-        BPoint newPoint = BPoint( Vector2(global.wx,global.wy) );
-        bezier.points.push_back(newPoint);
-        point = bezier.points.size() - 1;
-    }
-    else if (global.keys[KEY_MOUSE_LEFT].isKeyDown && point >= 0)
-    {
-        if (bezier.points.size() == 1){
-            bezier.points.at(point).setH1Linked(Vector2(global.wx,global.wy));
-        } else {
-            bezier.points.at(point).setH2Linked(Vector2(global.wx,global.wy));
-        }
-    }
-    else if (global.keys[KEY_MOUSE_LEFT].isKeyReleased)
-    {
-        point = -1;
-    }
+    // draw the zoom box + text
+    int xpos = 65;
+    int ypos = 11;
+    int w = 110;
+    int h = 21;
+
+    sf::RectangleShape tb(sf::Vector2f(w,h));
+    tb.setPosition(xpos,ypos);
+    tb.setFillColor(BG_DARK);
+    tb.setOutlineColor(GRAY32);
+    tb.setOutlineThickness(1);
+    global.window->draw(tb);
+
+    labelZoom.setString(gz::toString((1.f / global.zoom) * 100) + "%");
+    labelZoom.setPosition(xpos,ypos+2);
+    global.window->draw(labelZoom);
 }
-
-void App::deletePoint()
-{
-    if (global.keys[KEY_MOUSE_LEFT].isKeyPressed)
-    {
-        Vector2 result = bezier.findPoint(Vector2(global.wx,global.wy),(HANDLE_RADIUS*global.zoom));
-        point = result.x;
-        pointtype = result.y;
-
-        if (point < 0) return;
-
-        if (pointtype == 0) {
-            bezier.points.erase(bezier.points.begin()+point);
-        } else if (pointtype == 1) {
-            bezier.points.at(point).h1.set(bezier.points.at(point).p);
-        } else if (pointtype == 2) {
-            bezier.points.at(point).h2.set(bezier.points.at(point).p);
-        }
-    }
-}
-
-void App::movePoint()
-{
-    if (global.keys[KEY_MOUSE_LEFT].isKeyPressed)
-    {
-        Vector2 result = bezier.findPoint(Vector2(global.wx,global.wy),(global.getHandleRadiusSize()));
-        point = result.x;
-        pointtype = result.y;
-    }
-    else if (global.keys[KEY_MOUSE_LEFT].isKeyDown)
-    {
-        if (point < 0) return;
-
-        bool altDown = global.keys[sf::Keyboard::LAlt].isKeyDown || global.keys[sf::Keyboard::RAlt].isKeyDown;
-        BPoint& p = bezier.points.at(point);
-
-        // move the corresponding point
-        if (pointtype == 0) {
-                bezier.points.at(point).setPosition(Vector2(global.wx,global.wy));
-        } else if (pointtype == 1) {
-            if (altDown)    p.h1.set(global.wx,global.wy);
-            else            p.setH1Linked(global.wx,global.wy);
-        } else if (pointtype == 2) {
-            if (altDown)    p.h2.set(global.wx,global.wy);
-            else            p.setH2Linked(global.wx,global.wy);
-        }
-    }
-    else if (global.keys[KEY_MOUSE_LEFT].isKeyReleased)
-    {
-        point = -1;
-        pointtype = -1;
-    }
-}
-
 
 
 

@@ -26,5 +26,6 @@ static const sf::Color GRAY128(128,128,128);
 static const sf::Color GRAY192(192,192,192);
 static const sf::Color GRAY246(246,246,246);
 static const sf::Color WHITE(255,255,255);
+static const sf::Color BLUEGRAY(35,39,45);
 
 #endif // CONSTS_H_INCLUDED

@@ -120,8 +120,8 @@ void SettingsWindow::events()
 
     global.updateKeys();
 
-    global.mx = sf::Mouse::getPosition(window).x;
-    global.my = sf::Mouse::getPosition(window).y;
+    global.mouse.x = sf::Mouse::getPosition(window).x;
+    global.mouse.y = sf::Mouse::getPosition(window).y;
     mouse.x = sf::Mouse::getPosition(window).x;
     mouse.y = sf::Mouse::getPosition(window).y;
 
@@ -157,8 +157,8 @@ void SettingsWindow::render()
 
     window.draw(rec);
 
-    btnSave.draw();
-    btnCancel.draw();
+    btnSave.render();
+    btnCancel.render();
     txtboxes.render();
 
     window.draw(txt1);

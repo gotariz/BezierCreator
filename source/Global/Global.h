@@ -18,22 +18,21 @@ class Global
         sf::Font    fntRoboto;
         sf::Font    fntCourier;
 
-        BezierPath* bezier = nullptr;
+        Camera              camera;
+        BezierPath*         bezier = nullptr;
+        sf::RenderWindow*   window = nullptr;
 
-        sf::RenderWindow* window = nullptr;
-        Camera camera;
-        int w = 1280;
-        int h = 720;
+        int     w = 1280;
+        int     h = 720;
+        float   zoom = 1.f;
+        float   timeDelta = 0;
 
-        int mx = 0;
-        int my = 0;
-        float wx = 0;
-        float wy = 0;
-
-        float zoom = 1.f;
-        float timeDelta = 0;
-
-        int fpsLimit = 60;
+        Vector2 mouse;
+        Vector2 mouseWorld;
+        //int mx = 0;
+        //int my = 0;
+        //float wx = 0;
+        //float wy = 0;
 
         // events
         vector<KeyboardKey>	keys;
@@ -49,6 +48,7 @@ class Global
         float getHandleRadiusSize();
 
         // settings variables
+        int     fpsLimit = 60;
         int     gridSize = 50;
         bool    showCursorPosition = true;
         bool    useRelativeZoom = false;

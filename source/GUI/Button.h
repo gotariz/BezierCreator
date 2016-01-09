@@ -50,7 +50,7 @@ class Button{
         // FUNCTIONS
         ///////////////////////////////////////////////////////
         void handleEvents(Vector2 mouse);
-        void draw();
+        void render();
 
         bool isTouching(Vector2 point);
         void loadImage(string file);

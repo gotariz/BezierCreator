@@ -84,7 +84,7 @@ void Toolbar::handleEvents()
     for (int i=0;i<buttons.size();++i)
     {
         Button* btn = buttons.at(i);
-        btn->handleEvents(Vector2(global.mx,global.my));
+        btn->handleEvents(global.mouse);
 
         if (!btn->isClicked) continue;
 

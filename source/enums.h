@@ -27,7 +27,7 @@ enum Buttons
     BTN_DELETE,
     BTN_MOVE,
     BTN_EXPORT,
-    BTN_OPTIONS,
+    BTN_SETTINGS,
 };
 
 enum State
