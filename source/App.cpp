@@ -27,6 +27,10 @@ void App::init()
     indTexture.loadFromFile("media/images/indicator.png");
     indImg.setTexture(indTexture);
 
+    labelZoom.setFont(global.fntRoboto);
+    labelZoom.setCharacterSize(14);
+    labelZoom.setColor(WHITE);
+
     ball.setRadius(10);
     ball.setOrigin(10,10);
     ball.setFillColor(sf::Color::Red);
@@ -449,8 +453,12 @@ void App::renderZoomIndicator()
     tb.setOutlineThickness(1);
     global.window->draw(tb);
 
+    int labelx = xpos + (w / 2);
+
     labelZoom.setString(gz::toString((1.f / global.zoom) * 100) + "%");
-    labelZoom.setPosition(xpos,ypos+2);
+    labelx -= (labelZoom.getLocalBounds().width / 2);
+
+    labelZoom.setPosition(labelx,ypos+2);
     global.window->draw(labelZoom);
 }
 
