@@ -41,7 +41,13 @@ void App::init()
 /////////////////////////////////////////////////////////////////////////////
 void App::events()
 {
-    if (!window.hasFocus()) return;
+    if (!window.hasFocus()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) window.close();
+        }
+        return;
+    }
 
     global.isTextEntered = false;
     sf::Event event;

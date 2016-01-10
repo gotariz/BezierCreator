@@ -13,7 +13,7 @@ int main()
     sf::ContextSettings s;
     s.antialiasingLevel = 0;
 
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "Bezier Creator version: 1.01",flags,s);
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "Bezier Creator version: 1.02",flags,s);
     window.setFramerateLimit(global.fpsLimit);
     global.window = &window;
 

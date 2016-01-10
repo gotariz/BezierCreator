@@ -105,6 +105,14 @@ void SettingsWindow::run()
 
 void SettingsWindow::events()
 {
+    if (!window.hasFocus()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) window.close();
+        }
+        return;
+    }
+
     global.isTextEntered = false;
     sf::Event event;
     while (window.pollEvent(event))
