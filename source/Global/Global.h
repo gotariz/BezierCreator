@@ -16,7 +16,7 @@ class Global
 
         // fonts
         sf::Font    fntRoboto;
-        sf::Font    fntCourier;
+        sf::Font    fntOpenSans;
 
         Camera              camera;
         BezierPath*         bezier = nullptr;
@@ -29,10 +29,6 @@ class Global
 
         Vector2 mouse;
         Vector2 mouseWorld;
-        //int mx = 0;
-        //int my = 0;
-        //float wx = 0;
-        //float wy = 0;
 
         // events
         vector<KeyboardKey>	keys;

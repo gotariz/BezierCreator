@@ -256,7 +256,7 @@ void SettingsWindow::readSettings()
     }
     else
     {
-        gz::log_error("Unable to open file: config.ini");
+        cout << "Unable to open file: config.ini" << endl;
     }
     file.close();
 }

@@ -11,6 +11,8 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 using namespace tinyxml2;

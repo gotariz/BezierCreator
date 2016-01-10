@@ -16,12 +16,12 @@ void App::init()
 
     global.bezier = &bezier;
     global.fntRoboto.loadFromFile("media/fonts/Roboto-Light.ttf");
-    global.fntCourier.loadFromFile("media/fonts/OpenSans-Light.ttf");
+    global.fntOpenSans.loadFromFile("media/fonts/OpenSans-Light.ttf");
 
     ewindow.init();
     swindow.init();
 
-    v.set(-100,-global.h+100);
+    view.set(-100,-global.h+100);
     recalibrateView();
 
     indTexture.loadFromFile("media/images/indicator.png");
@@ -30,10 +30,6 @@ void App::init()
     labelZoom.setFont(global.fntRoboto);
     labelZoom.setCharacterSize(14);
     labelZoom.setColor(WHITE);
-
-    ball.setRadius(10);
-    ball.setOrigin(10,10);
-    ball.setFillColor(sf::Color::Red);
 
     btnSettings.id = BTN_SETTINGS;
     btnSettings.setSize(45,45);
@@ -45,6 +41,8 @@ void App::init()
 /////////////////////////////////////////////////////////////////////////////
 void App::events()
 {
+    if (!window.hasFocus()) return;
+
     global.isTextEntered = false;
     sf::Event event;
     while (window.pollEvent(event))
@@ -55,9 +53,8 @@ void App::events()
             global.w = event.size.width;
             global.h = event.size.height;
             recalibrateView();
-        } else if (event.type == sf::Event::MouseWheelScrolled) {
-
-            if (event.mouseWheelScroll.wheel != sf::Mouse::VerticalWheel) continue;
+        } else if (event.type == sf::Event::MouseWheelScrolled
+                   && event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
 
             if (global.useRelativeZoom) {
                 global.zoom *= 1.0 - (event.mouseWheelScroll.delta / 10.f);
@@ -131,9 +128,7 @@ void App::render()
     renderGrid();
     renderBezierCurve();
     renderGUI();
-    if (global.showBall) {
-            window.draw(ball);
-    }
+    renderBall();
     window.display();
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -158,11 +153,11 @@ void App::handleCamera()
 
     if (mouseLeft.isKeyPressed && isPanning) {
         cameraClick = global.mouse;
-        primalView = v;
+        primalView = view;
     } else if (mouseLeft.isKeyDown && space.isKeyDown){
         Vector2 delta = cameraClick - global.mouse;
-        v.x = primalView.x + (delta.x * global.zoom);
-        v.y = primalView.y + (delta.y* global.zoom);
+        view.x = primalView.x + (delta.x * global.zoom);
+        view.y = primalView.y + (delta.y* global.zoom);
         recalibrateView();
     }
 }
@@ -195,47 +190,29 @@ void App::handleBezier()
         hovertype = result.y;
     }
 
-    if (mouseLeft.isKeyPressed) {// left click
+    if (mouseLeft.isKeyPressed) {
         if (hoverpoint != -1) {
             point = hoverpoint;
             pointtype = hovertype;
-        } else { // add new point
+        } else {
             BPoint newPoint = BPoint(global.mouseWorld);
             bezier.points.push_back(newPoint);
             point = bezier.points.size() - 1;
             pointtype = (bezier.points.size() == 1 ? 1 : 2);
         }
         isEditing = true;
-
-    } else if (!mouseLeft.isKeyDown && mouseRight.isKeyPressed)  {// right click
-        if (hoverpoint != -1) { // delete selected point
-            if (hovertype == 0) {
-                bezier.points.erase(bezier.points.begin()+hoverpoint);
-            } else if (hovertype == 1) {
-                bezier.points.at(hoverpoint).h1.set(bezier.points.at(hoverpoint).p);
-            } else if (hovertype == 2) {
-                bezier.points.at(hoverpoint).h2.set(bezier.points.at(hoverpoint).p);
-            }
-        }
+    } else if (!mouseLeft.isKeyDown && mouseRight.isKeyPressed && hoverpoint != -1)  {// right click
+        if      (hovertype == 0)  bezier.points.erase(bezier.points.begin()+hoverpoint);
+        else if (hovertype == 1)  bezier.points.at(hoverpoint).h1.set(bezier.points.at(hoverpoint).p);
+        else if (hovertype == 2)  bezier.points.at(hoverpoint).h2.set(bezier.points.at(hoverpoint).p);
     }
 
     if (mouseLeft.isKeyDown && point != -1) {
-
-        if (pointtype == 0) {
-            bezier.points.at(point).setPosition(global.mouseWorld);
-        } else if (pointtype == 1) {
-            if (altDown) {
-                bezier.points.at(point).h1.set(global.mouseWorld);
-            } else {
-                bezier.points.at(point).setH1Linked(global.mouseWorld);
-            }
-        } else if (pointtype == 2) {
-            if (altDown) {
-                bezier.points.at(point).h2.set(global.mouseWorld);
-            } else {
-                bezier.points.at(point).setH2Linked(global.mouseWorld);
-            }
-        }
+        if      (pointtype == 0)            bezier.points.at(point).setPosition(global.mouseWorld);
+        else if (pointtype == 1 && altDown) bezier.points.at(point).h1.set(global.mouseWorld);
+        else if (pointtype == 1)            bezier.points.at(point).setH1Linked(global.mouseWorld);
+        else if (pointtype == 2 && altDown) bezier.points.at(point).h2.set(global.mouseWorld);
+        else if (pointtype == 2)            bezier.points.at(point).setH2Linked(global.mouseWorld);
     }
 
     if (mouseLeft.isKeyReleased) {
@@ -251,6 +228,17 @@ void App::handleBezier()
 /////////////////////////////////////////////////////////////////////////////
 // RENDERING FUNCTIONS
 /////////////////////////////////////////////////////////////////////////////
+void App::renderBall()
+{
+    if (!global.showBall) return;
+
+    float radius = 10.f * global.zoom;
+    ball.setRadius(radius);
+    ball.setOrigin(radius,radius);
+    ball.setFillColor(RED);
+    window.draw(ball);
+}
+
 void App::renderGUI()
 {
     // render GUI to its own view
@@ -267,12 +255,11 @@ void App::renderGUI()
 /////////////////////////////////////////////////////////////////////////////
 void App::renderGrid()
 {
-    sf::View v = window.getView();
-    sf::Vector2f c = v.getCenter();
+    sf::Vector2f camera = window.getView().getCenter();
     float view_w = global.w * global.zoom;
     float view_h = global.h * global.zoom;
-    float view_x = c.x - (view_w / 2);
-    float view_y = c.y - (view_h / 2);
+    float view_x = camera.x - (view_w / 2);
+    float view_y = camera.y - (view_h / 2);
     float view_x2 = view_x + view_w;
     float view_y2 = view_y + view_h;
 
@@ -322,6 +309,8 @@ void App::renderBezierControls()
     c.setOrigin(HANDLE_RADIUS * global.zoom,HANDLE_RADIUS * global.zoom);
     c.setFillColor(CBLUE);
 
+    Vector2 result = bezier.findPoint(global.mouseWorld,HANDLE_RADIUS * global.zoom);
+
     for (int i=0;i<bezier.points.size();++i)
     {
         Vector2 p   = bezier.points.at(i).p;
@@ -331,12 +320,15 @@ void App::renderBezierControls()
         global.drawLine(h1,p,CBLUE);
         global.drawLine(p,h2,CBLUE);
 
+        c.setFillColor(DBLUE);
         c.setPosition(p.x,p.y);
         global.window->draw(c);
 
+        c.setFillColor(CBLUE);
         c.setPosition(h1.x,h1.y);
         global.window->draw(c);
 
+        c.setFillColor(CBLUE);
         c.setPosition(h2.x,h2.y);
         global.window->draw(c);
     }
@@ -396,12 +388,12 @@ void App::renderBezierDebug()
 void App::recalibrateView()
 {
     // apply changes to the camera
-    sf::View view(sf::FloatRect(0,0,global.w,global.h));
-    view.move( sf::Vector2f(static_cast<int>(v.x),static_cast<int>(v.y)) );
-    view.zoom(global.zoom);
-    window.setView(view);
+    sf::View newView(sf::FloatRect(0,0,global.w,global.h));
+    newView.move( sf::Vector2f(static_cast<int>(view.x),static_cast<int>(view.y)) );
+    newView.zoom(global.zoom);
+    window.setView(newView);
 }
-
+/////////////////////////////////////////////////////////////////////////////
 void App::renderCursorIndicator()
 {
     if (!global.showCursorPosition) return;
@@ -418,7 +410,7 @@ void App::renderCursorIndicator()
     int y = global.mouse.y-40;
     int w = tw+10;
     int h = 19;
-    int i = 5;  // indent
+    int i = 5;
 
     // keep the rectangle in bounds of the window
     if (x+tw+10 > global.w) x = global.w-tw-10;
@@ -437,10 +429,9 @@ void App::renderCursorIndicator()
     text.setPosition(x+i,y);
     window.draw(text);
 }
-
+/////////////////////////////////////////////////////////////////////////////
 void App::renderZoomIndicator()
 {
-    // draw the zoom box + text
     int xpos = 65;
     int ypos = 11;
     int w = 110;
@@ -461,44 +452,4 @@ void App::renderZoomIndicator()
     labelZoom.setPosition(labelx,ypos+2);
     global.window->draw(labelZoom);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/////////////////////////////////////////////////////////////////////////////

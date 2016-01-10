@@ -16,40 +16,32 @@ class App
         App(sf::RenderWindow& rwindow);
         virtual ~App();
 
-        sf::RenderWindow& window;
+        gzClock             clock;
+        BezierPath          bezier;
+        sf::RenderWindow&   window;
+        ExportWindow        ewindow; // export window
+        SettingsWindow      swindow; // settings window
 
-        BezierPath bezier;
+        // index of mouse overed point
+        int                 point = -1;
+        int                 pointtype = -1;
+        bool                isEditing = false;
+        bool                isPanning = false;
 
-        gzClock clock;
+        Vector2             cameraClick;
+        Vector2             primalView;
+        Vector2             view;
 
-        // points currently being used
-        int         point = -1;
-        int         pointtype = -1;
+        sf::CircleShape     ball;
+        sf::Texture         indTexture;
+        sf::Sprite          indImg;
 
-        // mouse positions when panning
-        Vector2 cameraClick;
-        Vector2 primalView;
-        Vector2 v;
+        float               time = 0;
+        float               dtime = 0;
+        int                 increasing = 1;
 
-        bool isEditing = false;
-        bool isPanning = false;
-
-        sf::Texture indTexture;
-        sf::Sprite  indImg;
-
-        sf::CircleShape ball;
-        float time = 0;
-
-        int increasing = 1;
-        float dtime = 0;
-
-        sf::Text    labelZoom;
-        Button      btnSettings;
-
-
-        // selected buttons
-        ExportWindow    ewindow;
-        SettingsWindow  swindow;
+        sf::Text            labelZoom;
+        Button              btnSettings;
 
         // FUNCTIONS
         void init();
@@ -61,6 +53,7 @@ class App
         void handleCamera();
         bool handleGui();
 
+        void renderBall();
         void renderGrid();
         void renderGUI();
         void renderBezierCurve();

@@ -9,7 +9,7 @@ using namespace std;
 int main()
 {
     cout << fixed;
-    cout << "Bezier Creator version: 0.1" << endl;
+    cout << "Bezier Creator version: 1.0" << endl;
 
     int flags = sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close;
 

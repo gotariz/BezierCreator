@@ -16,6 +16,7 @@ static const float         PAN_SPEED = 500.0; // pixels per second
 
 // colors
 static const sf::Color CBLUE(10,170,235);
+static const sf::Color DBLUE(0,100,165);
 static const sf::Color CBLUET(10,170,235,64);
 static const sf::Color BG_DARK(106,108,113);
 
@@ -27,5 +28,6 @@ static const sf::Color GRAY192(192,192,192);
 static const sf::Color GRAY246(246,246,246);
 static const sf::Color WHITE(255,255,255);
 static const sf::Color BLUEGRAY(35,39,45);
+static const sf::Color RED(255,0,0);
 
 #endif // CONSTS_H_INCLUDED

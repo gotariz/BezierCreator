@@ -1,33 +1,5 @@
 #include "Vector2.h"
 
-//Vector2::Vector2(const char* vectorString)
-//{
-//    if (vectorString == NULL)
-//    {
-//        x = 0;
-//        y = 0;
-//    }
-//    else
-//    {
-//        std::string value = "";
-//        std::string vstring = vectorString;
-//        for (char c: vstring)
-//        {
-//            if (c == ',')
-//            {
-//                x = atof(value.c_str());
-//                value = "";
-//            }
-//            else
-//            {
-//                value += gz::toString(c);
-//            }
-//        }
-//
-//        y = atof(value.c_str());
-//    }
-//}
-
 Vector2::Vector2(float xval, float yval) : x(xval), y(yval)
 {
 

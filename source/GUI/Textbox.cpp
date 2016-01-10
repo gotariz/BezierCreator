@@ -17,7 +17,7 @@ Textbox::Textbox(int x, int y)
     rec.setOutlineColor(GRAY192);
     cursor.rec.setFillColor(BLACK);
 
-    label.setFont(global.fntCourier);
+    label.setFont(global.fntOpenSans);
     label.setCharacterSize(15);
     label.setColor(BLACK);
 }
@@ -75,7 +75,6 @@ void Textbox::handleEvents()
         }
     }
 
-    // We do not want to handle events if this textbox does not have focus
     if (!isFocused) return;
 
     // handle text input

@@ -179,47 +179,65 @@ bool ExportWindow::save(string path)
     else if (normalise == 1)    divisor = w; // normalise x
     else if (normalise == 2)    divisor = h; // normalise y
 
-    if      (divisor == 0)      divisor = 1; // don't allow division by 0
-
-    for (int i=0;i<bezier.points.size();++i)
+    if (normalise != 0)
     {
-        Vector2 p = bezier.points.at(i).p;
-        Vector2 h1 = bezier.points.at(i).h1;
-        Vector2 h2 = bezier.points.at(i).h2;
+        for (int i=0;i<bezier.points.size();++i)
+        {
+            Vector2 p = bezier.points.at(i).p;
+            Vector2 h1 = bezier.points.at(i).h1;
+            Vector2 h2 = bezier.points.at(i).h2;
 
-        bezier.points.at(i).h1.x   = (h1.x - s.x) / divisor;
-        bezier.points.at(i).p.x    = (p.x - s.x) / divisor;
-        bezier.points.at(i).h2.x   = (h2.x - s.x) / divisor;
+            bezier.points.at(i).h1.x   = (h1.x - s.x) / divisor;
+            bezier.points.at(i).p.x    = (p.x - s.x) / divisor;
+            bezier.points.at(i).h2.x   = (h2.x - s.x) / divisor;
 
-        bezier.points.at(i).h1.y   = (h1.y - s.y) / divisor;
-        bezier.points.at(i).p.y    = (p.y - s.y) / divisor;
-        bezier.points.at(i).h2.y   = (h2.y - s.y) / divisor;
+            bezier.points.at(i).h1.y   = (h1.y - s.y) / divisor;
+            bezier.points.at(i).p.y    = (p.y - s.y) / divisor;
+            bezier.points.at(i).h2.y   = (h2.y - s.y) / divisor;
+        }
     }
 
-    // TODO: write to XML
-    XMLDocument doc;
-    XMLNode* root = doc.NewElement("root");
-    doc.InsertFirstChild(root);
+//    // TODO: write to XML
+//    XMLDocument doc;
+//    XMLNode* root = doc.NewElement("root");
+//    doc.InsertFirstChild(root);
+//
+//    for (int i=0;i<bezier.points.size();++i)
+//    {
+//        XMLElement* element = doc.NewElement("point");
+//        element->SetAttribute("h1",bezier.points.at(i).h1.toString().c_str());
+//        element->SetAttribute("p",bezier.points.at(i).p.toString().c_str());
+//        element->SetAttribute("h2",bezier.points.at(i).h2.toString().c_str());
+//        root->InsertEndChild(element);
+//    }
+//
+//    XMLError result = doc.SaveFile(path.c_str());
+//    if (result != XML_SUCCESS)
+//    {
+//        tinyfd_messageBox(
+//                    "Error",
+//                    "There was an error saving the file: " + result,
+//                    "ok",
+//                    "error",
+//                    1 );
+//
+//        return false;
+//    }
 
-    for (int i=0;i<bezier.points.size();++i)
-    {
-        XMLElement* element = doc.NewElement("point");
-        element->SetAttribute("h1",bezier.points.at(i).h1.toString().c_str());
-        element->SetAttribute("p",bezier.points.at(i).p.toString().c_str());
-        element->SetAttribute("h2",bezier.points.at(i).h2.toString().c_str());
-        root->InsertEndChild(element);
-    }
+    ofstream file (path.c_str());
+    if (file.is_open()) {
 
-    XMLError result = doc.SaveFile(path.c_str());
-    if (result != XML_SUCCESS)
-    {
-        tinyfd_messageBox(
-                    "Error",
-                    "There was an error saving the file: " + result,
-                    "ok",
-                    "error",
-                    1 );
+        for (int i=0;i<bezier.points.size();++i)
+        {
+            file << "["   << bezier.points.at(i).h1.toString()
+                 << "]#[" << bezier.points.at(i).p.toString()
+                 << "]#[" << bezier.points.at(i).h2.toString()
+                 << "]" << endl;
+        }
 
+        file.close();
+    } else {
+        cout << "Unable to open config.ini" << endl;
         return false;
     }
 
