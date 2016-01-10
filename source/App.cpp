@@ -80,6 +80,10 @@ void App::events()
         }
     }
 
+     if (global.keys[sf::Keyboard::BackSpace].isKeyPressed) {
+        bezier.points.clear();
+    }
+
     // set global variables for mouse positions
     global.mouse.x = sf::Mouse::getPosition(window).x;
     global.mouse.y = sf::Mouse::getPosition(window).y;

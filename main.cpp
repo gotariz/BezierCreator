@@ -8,15 +8,12 @@ using namespace std;
 
 int main()
 {
-    cout << fixed;
-    cout << "Bezier Creator version: 1.0" << endl;
-
     int flags = sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close;
 
     sf::ContextSettings s;
     s.antialiasingLevel = 0;
 
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "Bezier Creator version: 0.1",flags,s);
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "Bezier Creator version: 1.01",flags,s);
     window.setFramerateLimit(global.fpsLimit);
     global.window = &window;
 
